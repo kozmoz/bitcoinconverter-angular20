@@ -35,8 +35,8 @@ $ npm run start
 
 ## Built With
 
-* [Angular](https://angular.io) 20 - The modern web application framework
-* [Angular CLI](https://github.com/angular/angular-cli) 20.1.5 - Tooling, dev server, and build system
+* [Angular](https://angular.io) - 20 - The modern web application framework
+* [Angular CLI](https://github.com/angular/angular-cli) - 20.1.5 - Tooling, dev server, and build system
 * [Bootstrap](https://getbootstrap.com) – Responsive, mobile-first front-end component library
 * [Coingecko.com API](https://api.coingecko.com/api) - Coingecko Bitcoin Price Index API
 
