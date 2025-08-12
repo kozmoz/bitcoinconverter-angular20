@@ -13,16 +13,18 @@ import {BitcoinActions} from './store/bitcoin.actions';
   styleUrl: './app.css'
 })
 export class App {
-  title = signal<string>('Angular App');
+
   amount = signal(1);
   currency = signal<'eur' | 'usd'>('eur');
   direction = signal<'btc-to-fiat' | 'fiat-to-btc'>('btc-to-fiat');
+
   private store = inject(Store);
+
   priceEur$: Observable<number | null> = this.store.select(selectPriceFor('eur'));
   priceUsd$: Observable<number | null> = this.store.select(selectPriceFor('usd'));
 
   lastUpdatedEur$: Observable<number> = this.store.select(selectLastUpdatedFor('eur'));
-  lastUpdatedUsd$: Observable<number> = this.store.select(selectLastUpdatedFor('usd'));
+  // lastUpdatedUsd$: Observable<number> = this.store.select(selectLastUpdatedFor('usd'));
 
   errorEur$: Observable<string | undefined> = this.store.select(selectErrorFor('eur'));
   errorUsd$: Observable<string | undefined> = this.store.select(selectErrorFor('usd'));

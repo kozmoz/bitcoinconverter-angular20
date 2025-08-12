@@ -14,9 +14,8 @@
       <div class="mb-3 row">
         <label class="col-sm-2 col-form-label" for="currency">Currency</label>
         <div class="col-sm-10">
-          <select id="currency" class="form-select w-auto" [ngModel]="currency()"
-                  (ngModelChange)="onCurrencyChange($event)"
-                  [disabled]="currency() === 'eur' ? (priceEur$ | async) === null : (priceUsd$ | async) === null">
+          <select id="currency" class="form-select w-auto" [(ngModel)]="currency"
+                  [disabled]="(priceEur$ | async) === null || (priceUsd$ | async) === null">
             <option value="eur">EUR</option>
             <option value="usd">USD</option>
           </select>
@@ -28,18 +27,16 @@
         <div class="col-sm-10">
           <div class="form-check form-check">
             <input class="form-check-input" type="radio" id="dir-btc-to-fiat" name="direction"
-                   [value]="'btc-to-fiat'"
-                   [ngModel]="direction()" (ngModelChange)="direction.set($event)"
-                   [disabled]="currency() === 'eur' ? (priceEur$ | async) === null : (priceUsd$ | async) === null">
+                   [value]="'btc-to-fiat'" [(ngModel)]="direction"
+                   [disabled]="(priceEur$ | async) === null || (priceUsd$ | async) == null">
             <label class="form-check-label" for="dir-btc-to-fiat">
               BTC → {{ currency() === 'eur' ? 'Euro' : 'Dollar' }}
             </label>
           </div>
           <div class="form-check form-check">
             <input class="form-check-input" type="radio" id="dir-fiat-to-btc" name="direction"
-                   [value]="'fiat-to-btc'"
-                   [ngModel]="direction()" (ngModelChange)="direction.set($event)"
-                   [disabled]="currency() === 'eur' ? (priceEur$ | async) === null : (priceUsd$ | async) === null">
+                   [value]="'fiat-to-btc'" [(ngModel)]="direction"
+                   [disabled]="(priceEur$ | async) === null || (priceUsd$ | async) === null">
             <label class="form-check-label" for="dir-fiat-to-btc">
               {{ currency() === 'eur' ? 'Euro' : 'Dollar' }} → BTC
             </label>
@@ -55,8 +52,7 @@
               {{ (direction() === 'btc-to-fiat') ? 'BTC' : (currency() === 'eur' ? 'EUR' : 'USD') }}
             </span>
             <input id="amount" class="form-control" type="number"
-                   [attr.step]="direction() === 'btc-to-fiat' ? '0.000001' : '1'"
-                   min="0" [ngModel]="amount()" (ngModelChange)="amount.set($event)"
+                   [attr.step]="direction() === 'btc-to-fiat' ? '0.000001' : '1'" min="0" [(ngModel)]="amount"
                    [disabled]="(priceEur$ | async) === null || (priceUsd$ | async) === null"/>
           </div>
           <div class="form-text">The amount that is user for the calculations.</div>
@@ -114,7 +110,7 @@
 
   <!-- Below: details and conversions -->
   <div class="mt-4">
-    @let err = (errorEur$ | async);
+    @let err = (errorEur$ | async) || (errorUsd$ | async);
     @if (err) {
       <div class="alert alert-danger" role="alert">{{ err }}</div>
     }
