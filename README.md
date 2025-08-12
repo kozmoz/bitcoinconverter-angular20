@@ -1,8 +1,3 @@
-## Me
-Update the README. Change all references to Vue to Angular 20. Also add somewhere the text "`This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.1.5.`"
-
-## AI Assistant
-
 # Bitcoin Converter written in Angular 20 (TypeScript)
 
 The following tools/frameworks are used:
