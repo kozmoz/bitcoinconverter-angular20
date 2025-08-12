@@ -24,24 +24,37 @@
       </div>
 
       <div class="mb-3 row">
-        <label class="col-sm-2 col-form-label d-block">Direction</label>
+        <label class="col-sm-2 col-form-label d-block" for="dir-btc-to-fiat">Direction</label>
         <div class="col-sm-10">
-          <select class="form-select w-auto" [ngModel]="direction()" (ngModelChange)="direction.set($event)"
-                  [disabled]="currency() === 'eur' ? (priceEur$ | async) === null : (priceUsd$ | async) === null">
-            <option value="btc-to-fiat">BTC → {{ currency() === 'eur' ? 'Euro' : 'Dollar' }}</option>
-            <option value="fiat-to-btc">{{ currency() === 'eur' ? 'Euro' : 'Dollar' }} → BTC</option>
-          </select>
+          <div class="form-check form-check">
+            <input class="form-check-input" type="radio" id="dir-btc-to-fiat" name="direction"
+                   [value]="'btc-to-fiat'"
+                   [ngModel]="direction()" (ngModelChange)="direction.set($event)"
+                   [disabled]="currency() === 'eur' ? (priceEur$ | async) === null : (priceUsd$ | async) === null">
+            <label class="form-check-label" for="dir-btc-to-fiat">
+              BTC → {{ currency() === 'eur' ? 'Euro' : 'Dollar' }}
+            </label>
+          </div>
+          <div class="form-check form-check">
+            <input class="form-check-input" type="radio" id="dir-fiat-to-btc" name="direction"
+                   [value]="'fiat-to-btc'"
+                   [ngModel]="direction()" (ngModelChange)="direction.set($event)"
+                   [disabled]="currency() === 'eur' ? (priceEur$ | async) === null : (priceUsd$ | async) === null">
+            <label class="form-check-label" for="dir-fiat-to-btc">
+              {{ currency() === 'eur' ? 'Euro' : 'Dollar' }} → BTC
+            </label>
+          </div>
         </div>
       </div>
 
       <div class="mb-3 row">
-        <label class="col-sm-2 col-form-label">Amount</label>
+        <label class="col-sm-2 col-form-label" for="amount">Amount</label>
         <div class="col-sm-10">
           <div class="input-group" style="width: 20em;">
             <span class="input-group-text">
               {{ (direction() === 'btc-to-fiat') ? 'BTC' : (currency() === 'eur' ? 'EUR' : 'USD') }}
             </span>
-            <input class="form-control" type="number"
+            <input id="amount" class="form-control" type="number"
                    [attr.step]="direction() === 'btc-to-fiat' ? '0.000001' : '1'"
                    min="0" [ngModel]="amount()" (ngModelChange)="amount.set($event)"
                    [disabled]="(priceEur$ | async) === null || (priceUsd$ | async) === null"/>
