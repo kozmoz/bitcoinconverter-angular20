@@ -1,6 +1,6 @@
-import { createSelector } from '@ngrx/store';
-import { bitcoinFeature } from './bitcoin.reducer';
-import { FiatCurrency } from '../services/price.service';
+import {createSelector} from '@ngrx/store';
+import {bitcoinFeature} from './bitcoin.reducer';
+import {FiatCurrency} from '../services/price.service';
 
 export const selectPriceFor = (currency: FiatCurrency) =>
   createSelector(bitcoinFeature.selectPrices, (prices) => prices[currency] ?? null);

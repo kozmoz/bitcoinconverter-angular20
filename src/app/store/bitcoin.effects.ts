@@ -1,31 +1,38 @@
-import { inject, Injectable } from '@angular/core';
-import { Actions, ROOT_EFFECTS_INIT, createEffect, ofType } from '@ngrx/effects';
-import { Store } from '@ngrx/store';
-import { BitcoinActions } from './bitcoin.actions';
-import { PriceService, FiatCurrency } from '../services/price.service';
-import { catchError, filter, interval, map, mergeMap, of, switchMap, withLatestFrom } from 'rxjs';
-import { selectLastUpdatedFor } from './bitcoin.selectors';
-import { HttpErrorResponse } from '@angular/common/http';
+import {inject, Injectable} from '@angular/core';
+import {Actions, createEffect, ofType, ROOT_EFFECTS_INIT} from '@ngrx/effects';
+import {Store} from '@ngrx/store';
+import {BitcoinActions} from './bitcoin.actions';
+import {FiatCurrency, PriceService} from '../services/price.service';
+import {catchError, filter, interval, map, mergeMap, of, switchMap, withLatestFrom} from 'rxjs';
+import {selectLastUpdatedFor} from './bitcoin.selectors';
+import {HttpErrorResponse} from '@angular/common/http';
 
 @Injectable()
 export class BitcoinEffects {
 
   private actions$ = inject(Actions);
-  private store = inject(Store);
-  private api = inject(PriceService);
-
   // Start background refresh every minute after effects init
   startPolling$ = createEffect(() =>
     this.actions$.pipe(
       ofType(ROOT_EFFECTS_INIT),
       switchMap(() => interval(60000)),
       mergeMap(() => [
-        BitcoinActions.loadPrice({ currency: 'eur' }),
-        BitcoinActions.loadPrice({ currency: 'usd' })
+        BitcoinActions.loadPrice({currency: 'eur'}),
+        BitcoinActions.loadPrice({currency: 'usd'})
       ])
     )
   );
-
+  // Also trigger an immediate initial fetch for both currencies on init
+  initialFetch$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ROOT_EFFECTS_INIT),
+      mergeMap(() => [
+        BitcoinActions.loadPrice({currency: 'eur'}),
+        BitcoinActions.loadPrice({currency: 'usd'})
+      ])
+    )
+  );
+  private store = inject(Store);
   // On load request, only call API if lastUpdated older than 60s
   loadPrice$ = createEffect(() =>
     this.actions$.pipe(
@@ -39,25 +46,15 @@ export class BitcoinEffects {
         const last = action.currency === 'eur' ? eurLast : usdLast;
         return now - last >= 60000 || last === 0; // ensure max once per minute
       }),
-      mergeMap(([{ currency }]) => this.fetchCurrency(currency))
+      mergeMap(([{currency}]) => this.fetchCurrency(currency))
     )
   );
-
-  // Also trigger an immediate initial fetch for both currencies on init
-  initialFetch$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(ROOT_EFFECTS_INIT),
-      mergeMap(() => [
-        BitcoinActions.loadPrice({ currency: 'eur' }),
-        BitcoinActions.loadPrice({ currency: 'usd' })
-      ])
-    )
-  );
+  private api = inject(PriceService);
 
   private fetchCurrency(currency: FiatCurrency) {
     const timestamp = Date.now();
     return this.api.fetchBtcPrice(currency).pipe(
-      map((price) => BitcoinActions.loadPriceSuccess({ currency, price, timestamp })),
+      map((price) => BitcoinActions.loadPriceSuccess({currency, price, timestamp})),
       catchError((err: unknown) => {
         let message = 'Failed to load price';
         const anyErr = err as any;
@@ -73,7 +70,7 @@ export class BitcoinEffects {
         if (typeof (anyErr?.message) === 'string' && anyErr.message.includes('RATE_LIMIT')) {
           message = "You've exceeded the rate limit. Please try again later.";
         }
-        return of(BitcoinActions.loadPriceFailure({ currency, error: message, timestamp }));
+        return of(BitcoinActions.loadPriceFailure({currency, error: message, timestamp}));
       })
     );
   }

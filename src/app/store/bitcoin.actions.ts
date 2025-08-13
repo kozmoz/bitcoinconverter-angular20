@@ -1,5 +1,5 @@
-import { createActionGroup, emptyProps, props } from '@ngrx/store';
-import { FiatCurrency } from '../services/price.service';
+import {createActionGroup, emptyProps, props} from '@ngrx/store';
+import {FiatCurrency} from '../services/price.service';
 
 export const BitcoinActions = createActionGroup({
   source: 'Bitcoin',
