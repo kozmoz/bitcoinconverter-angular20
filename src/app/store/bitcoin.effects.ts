@@ -9,6 +9,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 
 @Injectable()
 export class BitcoinEffects {
+
   private actions$ = inject(Actions);
   private store = inject(Store);
   private api = inject(PriceService);

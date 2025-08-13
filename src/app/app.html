@@ -62,11 +62,13 @@
 
     <!-- Right: Rate Panel -->
     <div class="col-12 col-lg-6">
+
+      @let eur = priceEur$ | async;
+      @let usd = priceUsd$ | async;
+
       <div class="border border-2 border-primary rounded-4 p-4">
         <div class="display-6 fw-semibold text-center mb-3">
 
-          @let eur = priceEur$ | async;
-          @let usd = priceUsd$ | async;
           @if (eur === null || usd === null) {
             <div class="text-muted">Loading current rate…</div>
           } @else {
@@ -101,8 +103,10 @@
         } @else {
           <em>—</em>
         }, <br/>
-          1 BTC = {{ (priceEur$ | async) | currency:'EUR':'symbol':'1.2-2' }}, <br/>
-          1 BTC = {{ (priceUsd$ | async) | currency:'USD':'symbol':'1.2-2' }}
+          @if (eur !== null && usd !== null) {
+            1 BTC = {{ (priceEur$ | async) | currency:'EUR':'symbol':'1.2-2' }}, <br/>
+            1 BTC = {{ (priceUsd$ | async) | currency:'USD':'symbol':'1.2-2' }}
+          }
         </div>
       </div>
     </div>

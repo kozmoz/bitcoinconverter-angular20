@@ -4,13 +4,11 @@ import {FormsModule} from '@angular/forms';
 import {Store} from '@ngrx/store';
 import {Observable} from 'rxjs';
 import {selectErrorFor, selectLastUpdatedFor, selectPriceFor} from './store/bitcoin.selectors';
-import {BitcoinActions} from './store/bitcoin.actions';
 
 @Component({
   selector: 'app-root',
   imports: [CommonModule, FormsModule],
-  templateUrl: './app.html',
-  styleUrl: './app.css'
+  templateUrl: './app.html'
 })
 export class App {
 
@@ -24,13 +22,7 @@ export class App {
   priceUsd$: Observable<number | null> = this.store.select(selectPriceFor('usd'));
 
   lastUpdatedEur$: Observable<number> = this.store.select(selectLastUpdatedFor('eur'));
-  // lastUpdatedUsd$: Observable<number> = this.store.select(selectLastUpdatedFor('usd'));
 
   errorEur$: Observable<string | undefined> = this.store.select(selectErrorFor('eur'));
   errorUsd$: Observable<string | undefined> = this.store.select(selectErrorFor('usd'));
-
-  onCurrencyChange(value: 'eur' | 'usd') {
-    this.currency.set(value);
-    this.store.dispatch(BitcoinActions.loadPrice({currency: value}));
-  }
 }
