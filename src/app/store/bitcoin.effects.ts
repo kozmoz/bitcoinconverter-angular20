@@ -1,16 +1,20 @@
 import {inject, Injectable} from '@angular/core';
 import {Actions, createEffect, ofType, ROOT_EFFECTS_INIT} from '@ngrx/effects';
-import {Store} from '@ngrx/store';
 import {BitcoinActions} from './bitcoin.actions';
 import {FiatCurrency, PriceService} from '../services/price.service';
 import {catchError, filter, interval, map, mergeMap, of, switchMap, withLatestFrom} from 'rxjs';
 import {selectLastUpdatedFor} from './bitcoin.selectors';
 import {HttpErrorResponse} from '@angular/common/http';
+import {Store} from '@ngrx/store';
 
 @Injectable()
 export class BitcoinEffects {
 
+  private store = inject(Store);
+  private api = inject(PriceService);
+
   private actions$ = inject(Actions);
+
   // Start background refresh every minute after effects init
   startPolling$ = createEffect(() =>
     this.actions$.pipe(
@@ -22,6 +26,7 @@ export class BitcoinEffects {
       ])
     )
   );
+
   // Also trigger an immediate initial fetch for both currencies on init
   initialFetch$ = createEffect(() =>
     this.actions$.pipe(
@@ -32,7 +37,7 @@ export class BitcoinEffects {
       ])
     )
   );
-  private store = inject(Store);
+
   // On load request, only call API if lastUpdated older than 60s
   loadPrice$ = createEffect(() =>
     this.actions$.pipe(
@@ -49,7 +54,6 @@ export class BitcoinEffects {
       mergeMap(([{currency}]) => this.fetchCurrency(currency))
     )
   );
-  private api = inject(PriceService);
 
   private fetchCurrency(currency: FiatCurrency) {
     const timestamp = Date.now();

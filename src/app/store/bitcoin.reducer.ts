@@ -3,6 +3,7 @@ import {BitcoinActions} from './bitcoin.actions';
 import {FiatCurrency} from '../services/price.service';
 
 export interface BitcoinState {
+  // Partial to allow for partial updates; It makes the keys optional.
   prices: Partial<Record<FiatCurrency, number>>;
   lastUpdated: Partial<Record<FiatCurrency, number>>; // epoch ms
   loading: Partial<Record<FiatCurrency, boolean>>;
@@ -25,6 +26,7 @@ export const bitcoinFeature = createFeature({
       loading: {...state.loading, [currency]: true},
       error: {...state.error, [currency]: undefined}
     })),
+
     on(BitcoinActions.loadPriceSuccess, (state, {currency, price, timestamp}) => ({
       ...state,
       prices: {...state.prices, [currency]: price},
@@ -32,6 +34,7 @@ export const bitcoinFeature = createFeature({
       loading: {...state.loading, [currency]: false},
       error: {...state.error, [currency]: undefined}
     })),
+
     on(BitcoinActions.loadPriceFailure, (state, {currency, error, timestamp}) => ({
       ...state,
       lastUpdated: {...state.lastUpdated, [currency]: timestamp},
@@ -41,6 +44,7 @@ export const bitcoinFeature = createFeature({
   )
 });
 
+// Export of the feature key and reducer for use in provideStore() in app.config.ts.
 export const {
   name: bitcoinFeatureKey,
   reducer: bitcoinReducer
